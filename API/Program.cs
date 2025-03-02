@@ -15,8 +15,10 @@ var connectionString =config.GetConnectionString("defaultConnection");
 options.UseSqlite(connectionString);
 
 });
+
+builder.Services.AddCors();
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi ders 9 a kadar sıkıntısız çalıstı 
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -33,6 +35,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors(opt=>
+
+{
+    opt.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000"); //VİDEO 20dde yaptı
+});
 
 app.UseAuthorization();
 

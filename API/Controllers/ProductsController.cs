@@ -1,5 +1,10 @@
+using System.Reflection.Metadata.Ecma335;
+using API.Data;
 using API.Entity;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SQLitePCL;
 
 namespace API.Controllers;
 
@@ -8,46 +13,48 @@ namespace API.Controllers;
 public class ProductsController:ControllerBase
 {
 
+private readonly DataContext _contex;
+public ProductsController(DataContext context)
+{
+    _contex  =context;
+}
+
+
+
+
+
 [HttpGet]
-public  IActionResult GetProducts()
+public  async Task<IActionResult> GetProducts()
 {
 
-return Ok(new List<Product>( ){
-    new Product
-    {Id=1,Name="Iphone 15  ",Description="Telefon Aciklamasi",ImageUrl="1.jpg"
-                ,Price=4000,IsActive=true,Stock=100
+var products =  await _contex.Products.ToListAsync();
+
+return Ok(products);
 
 
-    },
- new Product
-    {Id=2,Name="Iphone 1  ",Description="Telefon Aciklamasi",ImageUrl="1.jpg"
-                ,Price=4000,IsActive=true,Stock=100
+
+}
+[HttpGet("{id}")]
+public  async Task< IActionResult> GetProduct(int? id)
+{
+    if(id==null)
+    {
+        return NotFound();
+    }
+    
+   var product =await _contex.Products.FirstOrDefaultAsync(i=>i.Id ==id);
+
+    if(product ==null)
+    {
 
 
+    return NotFound();
     }
 
 
-
-
-
-});
-
-}
-
-[HttpGet("{id}")]
-public  IActionResult GetProduct(int id)
-{
-
-    return Ok(new 
-    
-          Product {Id=1,Name="Iphone 15  ",Description="Telefon Aciklamasi",ImageUrl="1.jpg"
-                ,Price=4000,IsActive=true,Stock=100}
-                
-                );
-
-}
-
-
+    return Ok(product);
+ }
+ 
 
 }
     
